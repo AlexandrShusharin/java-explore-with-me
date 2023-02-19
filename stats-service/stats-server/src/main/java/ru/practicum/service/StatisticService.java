@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface StatisticService {
     StatisticEventDto addEvent(StatisticEventDto eventDto);
+
     List<StatisticViewDto> getEvents(LocalDateTime startTime, LocalDateTime endTime, List<String> uris, boolean unique);
 }
