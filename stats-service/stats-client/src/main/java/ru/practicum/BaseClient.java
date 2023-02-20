@@ -1,5 +1,6 @@
 package ru.practicum;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.lang.Nullable;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -8,15 +9,11 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.Map;
 
+@RequiredArgsConstructor
 public class BaseClient {
     protected final RestTemplate rest;
 
-    public BaseClient(RestTemplate rest) {
-        this.rest = rest;
-    }
-
     protected ResponseEntity<Object> get(String path, @Nullable Map<String, Object> parameters) {
-        System.out.println(parameters);
         return makeAndSendRequest(HttpMethod.GET, path, parameters, null);
     }
 
