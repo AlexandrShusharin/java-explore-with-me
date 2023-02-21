@@ -8,7 +8,7 @@ services:
     depends_on:
       - stats-db
     environment:
-      - DB_NAME=swm-stat-db
+      - DB_NAME=ewm-stat-db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=iamroot
       - DB_HOST=stats-db
@@ -20,7 +20,7 @@ services:
     ports:
       - "6541:5432"
     environment:
-      - POSTGRES_DB=swm-stat-db
+      - POSTGRES_DB=ewm-stat-db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=iamroot
 
