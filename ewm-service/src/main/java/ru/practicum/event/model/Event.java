@@ -50,16 +50,16 @@ public class Event {
     private boolean paid;
 
     @Column(name = "participant_limit")
-    private Integer participantLimit;
+    private int participantLimit;
 
     @Column(name = "request_moderation")
-    private Boolean requestModeration;
+    private boolean requestModeration;
 
     @ManyToOne
     @JoinColumn(name = "initiator_id")
     private User initiator;
 
-    @Column
+    @Column(name = "state")
     @Enumerated(EnumType.STRING)
     private EventState state;
 }

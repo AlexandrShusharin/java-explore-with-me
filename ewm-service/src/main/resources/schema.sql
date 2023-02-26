@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS events (
     event_date TIMESTAMP WITHOUT TIME ZONE,
     created_on TIMESTAMP WITHOUT TIME ZONE,
     published_on TIMESTAMP WITHOUT TIME ZONE,
-    location_id BIGINT REFERENCES locations(id),
+    location_id BIGINT REFERENCES locations(id) ON DELETE CASCADE,
     paid BOOLEAN,
     participant_limit INT,
     request_moderation BOOLEAN,
