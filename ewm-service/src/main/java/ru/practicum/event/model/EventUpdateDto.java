@@ -2,8 +2,6 @@ package ru.practicum.event.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-import ru.practicum.category.model.Category;
-import ru.practicum.location.model.LocationDto;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
@@ -16,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class EventAddDto {
+public class EventUpdateDto{
     private long id;
     @NotBlank
     private String title;
@@ -26,8 +24,8 @@ public class EventAddDto {
     private long category;
     @NotBlank
     private String description;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Future
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     @NotNull
     private boolean paid;
@@ -36,6 +34,5 @@ public class EventAddDto {
     @NotNull
     private boolean requestModeration;
     @NotNull
-    private LocationDto location;
-
+    private EventUserStateAction stateAction;
 }
