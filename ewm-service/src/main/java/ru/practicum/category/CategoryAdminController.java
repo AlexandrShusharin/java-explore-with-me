@@ -31,5 +31,4 @@ public class CategoryAdminController {
     public void deleteCategory(@PathVariable Long id) {
         categoryService.deleteCategory(id);
     }
-
 }

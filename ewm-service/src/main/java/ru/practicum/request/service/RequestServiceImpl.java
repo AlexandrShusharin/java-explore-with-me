@@ -3,10 +3,7 @@ package ru.practicum.request.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.event.repository.EventRepository;
-import ru.practicum.request.model.Request;
-import ru.practicum.request.model.RequestDto;
-import ru.practicum.request.model.RequestMapper;
-import ru.practicum.request.model.RequestStatus;
+import ru.practicum.request.model.*;
 import ru.practicum.request.repository.RequestRepository;
 import ru.practicum.user.repository.UserRepository;
 
@@ -37,6 +34,22 @@ public class RequestServiceImpl implements RequestService {
         Request request = requestRepository.getReferenceById(requestId);
         request.setStatus(RequestStatus.PENDING);
         return RequestMapper.fromRequestToRequestDto(requestRepository.save(request));
+    }
+
+    @Override
+    public List<RequestDto> updateRequestStatus(long userId, long requestId,
+                                                RequestStatusUpdateDto updateRequests) {
+        requestRepository.updateRequestsStatus(updateRequests.getRequestIds(), updateRequests.getStatus());
+        return requestRepository.findAllByIds(updateRequests.getRequestIds()).stream()
+                .map(RequestMapper::fromRequestToRequestDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RequestDto> getEventRequests(long userId, long eventId) {
+        return requestRepository.findAllByEvent_Id(eventId).stream()
+                .map(RequestMapper::fromRequestToRequestDto)
+                .collect(Collectors.toList());
     }
 
     @Override
