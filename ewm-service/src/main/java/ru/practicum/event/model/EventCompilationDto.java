@@ -23,6 +23,6 @@ public class EventCompilationDto {
     private LocalDateTime eventDate;
     private boolean paid;
     private UserShortDto initiator;
-    private int confirmedRequests;
+    private long confirmedRequests;
     private int views;
 }

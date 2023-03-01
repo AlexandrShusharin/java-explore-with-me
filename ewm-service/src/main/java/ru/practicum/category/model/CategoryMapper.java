@@ -8,6 +8,13 @@ public class CategoryMapper {
                 .build();
     }
 
+    public static CategoryEventDto fromCategoryToCategoryEventDto(Category category) {
+        return CategoryEventDto.builder()
+                .id(category.getId())
+                .name(category.getName())
+                .build();
+    }
+
     public static Category fromCategoryDtoToCategory(CategoryDto categoryDto) {
         return Category.builder()
                 .id(categoryDto.getId())

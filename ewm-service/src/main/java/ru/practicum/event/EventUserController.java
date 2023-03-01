@@ -10,6 +10,7 @@ import ru.practicum.event.model.EventUpdateDto;
 import ru.practicum.event.service.EventService;
 import ru.practicum.request.model.RequestDto;
 import ru.practicum.request.model.RequestStatusUpdateDto;
+import ru.practicum.request.model.RequestsUpdatedDto;
 import ru.practicum.request.service.RequestService;
 
 import java.util.List;
@@ -49,16 +50,16 @@ public class EventUserController {
         return eventService.updateEvent(userId, eventId, eventUpdateDto);
     }
 
-    @GetMapping("/{eventId}/requests/")
+    @GetMapping("/{eventId}/requests")
     @ResponseStatus(HttpStatus.OK)
     public List<RequestDto> getEventRequests(@PathVariable long userId, @PathVariable long eventId) {
         return requestService.getEventRequests(userId, eventId);
     }
 
-    @PatchMapping("/{eventId}/requests/")
+    @PatchMapping("/{eventId}/requests")
     @ResponseStatus(HttpStatus.OK)
-    public List<RequestDto> setRequestsStatus(@PathVariable long userId, @PathVariable long eventId,
-                                              @RequestBody RequestStatusUpdateDto requestStatusUpdateDto) {
+    public RequestsUpdatedDto setRequestsStatus(@PathVariable long userId, @PathVariable long eventId,
+                                                @RequestBody RequestStatusUpdateDto requestStatusUpdateDto) {
         return requestService.updateRequestStatus(userId, eventId, requestStatusUpdateDto);
     }
 }

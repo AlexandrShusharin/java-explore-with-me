@@ -12,6 +12,7 @@ import ru.practicum.compilation.repository.CompilationRepository;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.EventCompilationDto;
 import ru.practicum.event.repository.EventRepository;
+import ru.practicum.request.repository.RequestRepository;
 import ru.practicum.user.model.UserMapper;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 public class CompilationServiceImpl implements CompilationService {
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
+    private final RequestRepository requestRepository;
 
     @Override
     public CompilationDto addCompilation(CompilationAddDto compilationAddDto) {
@@ -97,8 +99,8 @@ public class CompilationServiceImpl implements CompilationService {
                 .eventDate(event.getEventDate())
                 .paid(event.isPaid())
                 .initiator(UserMapper.fromUserToUserShortDto(event.getInitiator()))
-                //.confirmedRequests()
-                //.views()
+                .confirmedRequests(requestRepository.findCountConfirmedRequest(event.getId()))
+                .views(100)
                 .build();
     }
 

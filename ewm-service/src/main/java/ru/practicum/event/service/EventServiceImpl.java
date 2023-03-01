@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.practicum.category.model.Category;
+import ru.practicum.category.model.CategoryMapper;
 import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.event.model.*;
 import ru.practicum.event.repository.EventRepository;
@@ -111,7 +113,7 @@ public class EventServiceImpl implements EventService {
                 .title(event.getTitle())
                 .annotation(event.getAnnotation())
                 .description(event.getDescription())
-                .category(event.getCategory())
+                .category(CategoryMapper.fromCategoryToCategoryEventDto(event.getCategory()))
                 .eventDate(event.getEventDate())
                 .paid(event.isPaid())
                 .requestModeration(event.isRequestModeration())
@@ -121,8 +123,8 @@ public class EventServiceImpl implements EventService {
                 .location(LocationMapper.locationToLocationDto(event.getLocation()))
                 .initiator(UserMapper.fromUserToUserShortDto(event.getInitiator()))
                 .publishedOn(event.getPublishedOn())
-                //.confirmedRequests(requestRepository.findCountConfirmedRequest(event.getId()).size())
-                //.views()
+                .confirmedRequests(requestRepository.findCountConfirmedRequest(event.getId()))
+                .views(100) //ВРЕМЕННАЯ ЗАГЛУШКА!!!
                 .build();
     }
 

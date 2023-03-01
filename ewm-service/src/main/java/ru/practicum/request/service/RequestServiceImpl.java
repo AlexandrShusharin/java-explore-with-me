@@ -32,17 +32,24 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public RequestDto cancelRequest(long userId, long requestId) {
         Request request = requestRepository.getReferenceById(requestId);
-        request.setStatus(RequestStatus.PENDING);
+        request.setStatus(RequestStatus.CANCELED);
         return RequestMapper.fromRequestToRequestDto(requestRepository.save(request));
     }
 
     @Override
-    public List<RequestDto> updateRequestStatus(long userId, long requestId,
+    public RequestsUpdatedDto updateRequestStatus(long userId, long requestId,
                                                 RequestStatusUpdateDto updateRequests) {
         requestRepository.updateRequestsStatus(updateRequests.getRequestIds(), updateRequests.getStatus());
-        return requestRepository.findAllByIds(updateRequests.getRequestIds()).stream()
-                .map(RequestMapper::fromRequestToRequestDto)
-                .collect(Collectors.toList());
+        return RequestsUpdatedDto.builder()
+                .confirmedRequests(requestRepository.findAllByIdInAndStatus(updateRequests.getRequestIds(),
+                        RequestStatus.CONFIRMED).stream()
+                        .map(RequestMapper::fromRequestToRequestDto)
+                        .collect(Collectors.toList()))
+                .rejectedRequests(requestRepository.findAllByIdInAndStatus(updateRequests.getRequestIds(),
+                                RequestStatus.REJECTED).stream()
+                        .map(RequestMapper::fromRequestToRequestDto)
+                        .collect(Collectors.toList()))
+                .build();
     }
 
     @Override

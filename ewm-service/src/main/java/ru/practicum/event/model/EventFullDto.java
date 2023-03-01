@@ -3,6 +3,7 @@ package ru.practicum.event.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import ru.practicum.category.model.Category;
+import ru.practicum.category.model.CategoryEventDto;
 import ru.practicum.location.model.LocationDto;
 import ru.practicum.user.model.UserShortDto;
 
@@ -18,7 +19,7 @@ public class EventFullDto {
     private long id;
     private String title;
     private String annotation;
-    private Category category;
+    private CategoryEventDto category;
     private String description;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;

@@ -22,7 +22,7 @@ public class RequestController {
         return requestService.addRequest(userId, eventId);
     }
 
-    @PatchMapping("/{request}/cancel")
+    @PatchMapping("/{requestId}/cancel")
     @ResponseStatus(HttpStatus.OK)
     public RequestDto cancelRequest(@PathVariable long userId, @PathVariable long requestId) {
         return requestService.cancelRequest(userId, requestId);
