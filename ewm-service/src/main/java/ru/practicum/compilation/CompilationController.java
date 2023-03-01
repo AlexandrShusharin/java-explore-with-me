@@ -9,7 +9,8 @@ import ru.practicum.compilation.service.CompilationService;
 
 import java.util.List;
 
-@RestController("/compilations")
+@RestController
+@RequestMapping("/compilations")
 @RequiredArgsConstructor
 public class CompilationController {
     private final CompilationService compilationService;
