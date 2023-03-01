@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class EventFullDto {
     private long id;
     private String title;
@@ -31,6 +32,6 @@ public class EventFullDto {
     private boolean requestModeration;
     private UserShortDto initiator;
     private EventState state;
-    private int confirmedRequests;
+    private long confirmedRequests;
     private int views;
 }

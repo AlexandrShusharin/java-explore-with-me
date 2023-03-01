@@ -18,6 +18,7 @@ public class CompilationAdminController {
         return compilationService.addCompilation(compilationAddDto);
     }
 
+
     @PatchMapping("/{compId}")
     @ResponseStatus(HttpStatus.OK)
     public CompilationDto updateCompilation(@PathVariable Long compId,

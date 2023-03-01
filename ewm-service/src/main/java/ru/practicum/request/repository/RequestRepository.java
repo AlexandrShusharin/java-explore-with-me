@@ -15,10 +15,13 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     List<Request> findAllByEvent_Id(long eventId);
 
+//    @Query("SELECT COUNT(r) FROM Request r WHERE r.event.id = ?1 AND r.status = 'CONFIRMED'")
+//    Long findCountConfirmedRequest(Long eventId);
+
     @Modifying
-    @Query("UPDATE Request s SET s.status = ?1 WHERE s.id IN ?2")
+    @Query("UPDATE Request r SET r.status = ?1 WHERE r.id IN ?2")
     void updateRequestsStatus(List<Long> ids, RequestStatus status);
 
-    @Query("SELECT s FROM Request s WHERE s.id IN ?1")
+    @Query("SELECT r FROM Request r WHERE r.id IN ?1")
     List<Request> findAllByIds(List<Long> ids);
 }

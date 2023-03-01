@@ -31,6 +31,7 @@ public class UserAdminController {
         userRepository.deleteById(id);
     }
 
+
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<UserDto> getUsersList(@RequestParam(name = "ids", defaultValue = "[]") List<Long> usersIdList,

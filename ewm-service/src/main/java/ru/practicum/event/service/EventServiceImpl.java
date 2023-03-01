@@ -5,14 +5,14 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.practicum.category.model.CategoryMapper;
-import ru.practicum.category.service.CategoryService;
+import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.event.model.*;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.location.model.LocationMapper;
 import ru.practicum.location.repository.LocationRepository;
+import ru.practicum.request.repository.RequestRepository;
 import ru.practicum.user.model.UserMapper;
-import ru.practicum.user.service.UserService;
+import ru.practicum.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,13 +24,14 @@ import java.util.stream.Collectors;
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final LocationRepository locationRepository;
-    private final UserService userService;
-    private final CategoryService categoryService;
+    private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
+    private final RequestRepository requestRepository;
 
     @Override
     public EventFullDto addEvent(long userId, EventAddDto eventAddDto) {
         Event event = eventAddDtoToEvent(eventAddDto);
-        event.setInitiator(UserMapper.fromUserDtoToUser(userService.getUser(userId)));
+        event.setInitiator(userRepository.getReferenceById(userId));
         event.setCreatedOn(LocalDateTime.now());
         event.setState(EventState.PENDING);
         return eventToEventFullDto(eventRepository.save(event));
@@ -46,6 +47,12 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto getEvent(long userId, long eventId) {
+        return eventToEventFullDto(eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Ошибка")));
+    }
+
+    @Override
+    public EventFullDto getPublicEvent(long eventId) {
         return eventToEventFullDto(eventRepository.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Ошибка")));
     }
@@ -73,6 +80,7 @@ public class EventServiceImpl implements EventService {
         switch (eventAdminUpdateDto.getStateAction()) {
             case PUBLISH_EVENT:
                 event.setState(EventState.PUBLISHED);
+                event.setPublishedOn(LocalDateTime.now());
                 break;
             case REJECT_EVENT:
                 event.setState(EventState.CANCELED);
@@ -88,8 +96,7 @@ public class EventServiceImpl implements EventService {
                 .title(eventAddDto.getTitle())
                 .annotation(eventAddDto.getAnnotation())
                 .description(eventAddDto.getDescription())
-                .category(CategoryMapper.fromCategoryDtoToCategory(
-                        categoryService.getCategory(eventAddDto.getCategory())))
+                .category(categoryRepository.getReferenceById(eventAddDto.getCategory()))
                 .location(locationRepository.save(LocationMapper.locationDtoToLocation(eventAddDto.getLocation())))
                 .eventDate(eventAddDto.getEventDate())
                 .paid(eventAddDto.isPaid())
@@ -113,10 +120,10 @@ public class EventServiceImpl implements EventService {
                 .createdOn(event.getCreatedOn())
                 .location(LocationMapper.locationToLocationDto(event.getLocation()))
                 .initiator(UserMapper.fromUserToUserShortDto(event.getInitiator()))
+                .publishedOn(event.getPublishedOn())
+                //.confirmedRequests(requestRepository.findCountConfirmedRequest(event.getId()).size())
+                //.views()
                 .build();
-        //.publishedOn()
-        //.confirmedRequests()
-        //.views()
     }
 
     private int getPageNumber(int from, int size) {

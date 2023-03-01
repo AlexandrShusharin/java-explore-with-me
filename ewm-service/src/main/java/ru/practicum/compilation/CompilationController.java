@@ -1,6 +1,7 @@
 package ru.practicum.compilation;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.compilation.model.CompilationAddDto;
 import ru.practicum.compilation.model.CompilationDto;
@@ -14,6 +15,7 @@ public class CompilationController {
     private final CompilationService compilationService;
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<CompilationDto> getCompilations(@RequestParam(defaultValue = "false") boolean pinned,
                                                 @RequestParam(name = "from", defaultValue = "0") int from,
                                                 @RequestParam(name = "size", defaultValue = "1000000") int size) {
@@ -21,6 +23,7 @@ public class CompilationController {
     }
 
     @GetMapping("/{compId}")
+    @ResponseStatus(HttpStatus.OK)
     public CompilationDto getAllCompilation(@PathVariable Long compId) {
         return compilationService.getCompilation(compId);
     }
