@@ -3,10 +3,12 @@ package ru.practicum.event.model;
 import lombok.*;
 import ru.practicum.category.model.Category;
 import ru.practicum.location.model.Location;
+import ru.practicum.request.model.Request;
 import ru.practicum.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -63,4 +65,9 @@ public class Event {
     @Column(name = "state")
     @Enumerated(EnumType.STRING)
     private EventState state;
+
+    @OneToMany(mappedBy = "event",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
+    private List<Request> requests;
 }

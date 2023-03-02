@@ -21,18 +21,18 @@ public class EventUpdateDto{
     @NotBlank
     private String annotation;
     @NotBlank
-    private long category;
+    private Long category;
     @NotBlank
     private String description;
     @Future
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     @NotNull
-    private boolean paid;
+    private Boolean paid;
     @PositiveOrZero
-    private int participantLimit;
+    private Integer participantLimit;
     @NotNull
-    private boolean requestModeration;
+    private Boolean requestModeration;
     @NotNull
     private EventUserStateAction stateAction;
 }

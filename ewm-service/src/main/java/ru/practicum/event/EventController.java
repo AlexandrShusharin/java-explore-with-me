@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.category.model.Category;
 import ru.practicum.event.model.EventFullDto;
+import ru.practicum.event.model.EventShortDto;
 import ru.practicum.event.model.EventSortType;
 import ru.practicum.event.service.EventService;
 
@@ -22,24 +23,25 @@ public class EventController {
 
     @GetMapping("/{eventId}")
     @ResponseStatus(HttpStatus.OK)
-    public EventFullDto updateEvent(@PathVariable long eventId) {
+    public EventFullDto getEvent(@PathVariable long eventId) {
         return eventService.getPublicEvent(eventId);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<EventFullDto> getAllEvents(@RequestParam String text,
-                                           @RequestParam List<Category> categories,
-                                           @RequestParam Boolean paid,
-                                           @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                           @RequestParam LocalDateTime rangeStart,
-                                           @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                           @RequestParam LocalDateTime rangeEnd,
-                                           @RequestParam Boolean onlyAvailable,
-                                           @RequestParam EventSortType sort,
-                                           @RequestParam(defaultValue = "0") int from,
-                                           @RequestParam(defaultValue = "1000000") int size) {
-        return null;
-        //метод не написан
+    public List<EventShortDto> getAllEvents(@RequestParam String text,
+                                            @RequestParam List<Long> categories,
+                                            @RequestParam (defaultValue = "false") Boolean paid,
+                                            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                            @RequestParam LocalDateTime rangeStart,
+                                            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                            @RequestParam LocalDateTime rangeEnd,
+                                            @RequestParam(defaultValue = "false") Boolean onlyAvailable,
+                                            @RequestParam EventSortType sort,
+                                            @RequestParam(defaultValue = "0") int from,
+                                            @RequestParam(defaultValue = "1000000") int size) {
+
+        return eventService.getEventByUserFilter(text, categories, paid, rangeStart, rangeEnd, onlyAvailable,
+                sort, from, size);
     }
 }

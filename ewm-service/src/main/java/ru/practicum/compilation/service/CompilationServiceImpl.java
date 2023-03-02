@@ -10,10 +10,9 @@ import ru.practicum.compilation.model.CompilationAddDto;
 import ru.practicum.compilation.model.CompilationDto;
 import ru.practicum.compilation.repository.CompilationRepository;
 import ru.practicum.event.model.Event;
-import ru.practicum.event.model.EventCompilationDto;
+import ru.practicum.event.model.EventMapper;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.request.repository.RequestRepository;
-import ru.practicum.user.model.UserMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,13 +32,13 @@ public class CompilationServiceImpl implements CompilationService {
                 .title(compilationAddDto.getTitle())
                 .pinned(compilationAddDto.isPinned())
                 .build();
+        List<Event> events = new ArrayList<>();
         if (!compilationAddDto.getEvents().isEmpty()) {
-            List<Event> events = new ArrayList<>();
             for (long eventId : compilationAddDto.getEvents()) {
                 events.add(eventRepository.getReferenceById(eventId));
             }
-            compilation.setEvents(events);
         }
+        compilation.setEvents(events);
         return compilationToCompilationDto(compilationRepository.save(compilation));
     }
 
@@ -84,23 +83,8 @@ public class CompilationServiceImpl implements CompilationService {
                 .title(compilation.getTitle())
                 .pinned(compilation.isPinned())
                 .events(compilation.getEvents().stream()
-                        .map(this::eventToEventCompilationDto)
+                        .map(EventMapper::fromEventToEventShortDto)
                         .collect(Collectors.toList()))
-                .build();
-    }
-
-    private EventCompilationDto eventToEventCompilationDto(Event event) {
-        return EventCompilationDto.builder()
-                .id(event.getId())
-                .title(event.getTitle())
-                .annotation(event.getAnnotation())
-                .description(event.getDescription())
-                .category(event.getCategory())
-                .eventDate(event.getEventDate())
-                .paid(event.isPaid())
-                .initiator(UserMapper.fromUserToUserShortDto(event.getInitiator()))
-                .confirmedRequests(requestRepository.findCountConfirmedRequest(event.getId()))
-                .views(100)
                 .build();
     }
 
