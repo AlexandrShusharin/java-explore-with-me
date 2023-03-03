@@ -26,29 +26,31 @@ public class StatisticServiceClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> getStatistic(LocalDateTime start, LocalDateTime end, List<String> uris,
+    public List<StatisticViewDto> getStatistic(LocalDateTime start, LocalDateTime end, List<String> uris,
                                                boolean unique) {
         Map<String, Object> parameters = setBaseParameters(start, end);
         parameters.put("uris", uris.toArray());
         parameters.put("unique", unique);
-        return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
+        return (List<StatisticViewDto>) get("/stats?start={start}&end={end}&uris={uris}&unique={unique}"
+                , parameters).getBody();
     }
 
-    public ResponseEntity<Object> getStatistic(LocalDateTime start, LocalDateTime end) {
+    public List<StatisticViewDto> getStatistic(LocalDateTime start, LocalDateTime end) {
         Map<String, Object> parameters = setBaseParameters(start, end);
-        return get("/stats?start={start}&end={end}", parameters);
+        return (List<StatisticViewDto>) get("/stats?start={start}&end={end}", parameters).getBody();
     }
 
-    public ResponseEntity<Object> getStatistic(LocalDateTime start, LocalDateTime end, List<String> uris) {
+    public List<StatisticViewDto> getStatistic(LocalDateTime start, LocalDateTime end, List<String> uris) {
         Map<String, Object> parameters = setBaseParameters(start, end);
         parameters.put("uris", uris.toArray());
-        return get("/stats?start={start}&end={end}&uris={uris}", parameters);
+        return (List<StatisticViewDto>) get("/stats?start={start}&end={end}&uris={uris}", parameters).getBody();
     }
 
-    public ResponseEntity<Object> getStatistic(LocalDateTime start, LocalDateTime end, boolean unique) {
+    public List<StatisticViewDto> getStatistic(LocalDateTime start, LocalDateTime end, boolean unique) {
         Map<String, Object> parameters = setBaseParameters(start, end);
         parameters.put("unique", unique);
-        return get("/stats?start={start}&end={end}&unique={unique}", parameters);
+        return (List<StatisticViewDto>) get("/stats?start={start}&end={end}&unique={unique}",
+                parameters).getBody();
     }
 
     public ResponseEntity<Object> postStatistic(String app, String uri, String ip, LocalDateTime eventTime) {

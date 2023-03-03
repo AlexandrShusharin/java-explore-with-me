@@ -36,22 +36,7 @@ public class EventMapper {
                 .initiator(UserMapper.fromUserToUserShortDto(event.getInitiator()))
                 .publishedOn(event.getPublishedOn())
                 .confirmedRequests(getConfirmedRequestsCount(event))
-                .views(100)
-                .build();
-    }
-
-    public static EventShortDto fromEventFullDtoEventShortDto(EventFullDto eventFullDto) {
-        return EventShortDto.builder()
-                .id(eventFullDto.getId())
-                .title(eventFullDto.getTitle())
-                .annotation(eventFullDto.getAnnotation())
-                .description(eventFullDto.getDescription())
-                .category(eventFullDto.getCategory())
-                .eventDate(eventFullDto.getEventDate())
-                .paid(eventFullDto.isPaid())
-                .initiator(eventFullDto.getInitiator())
-                .confirmedRequests(eventFullDto.getConfirmedRequests())
-                .views(100)
+                .views(0)
                 .build();
     }
 
@@ -66,7 +51,7 @@ public class EventMapper {
                 .paid(event.isPaid())
                 .initiator(UserMapper.fromUserToUserShortDto(event.getInitiator()))
                 .confirmedRequests(getConfirmedRequestsCount(event))
-                .views(100)
+                .views(0)
                 .build();
     }
     private static long getConfirmedRequestsCount(Event event) {

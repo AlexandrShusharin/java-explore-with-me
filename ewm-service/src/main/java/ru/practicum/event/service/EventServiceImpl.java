@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.StatisticServiceClient;
+import ru.practicum.StatisticViewDto;
 import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.event.model.*;
 import ru.practicum.event.model.QEvent;
@@ -18,8 +19,7 @@ import ru.practicum.location.repository.LocationRepository;
 import ru.practicum.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +30,7 @@ public class EventServiceImpl implements EventService {
     private final LocationRepository locationRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final StatisticServiceClient statisticClient;
 
     @Override
     public EventFullDto addEvent(long userId, EventAddDto eventAddDto) {
@@ -46,24 +47,24 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventFullDto> getUserEvents(long userId, int from, int size) {
         Pageable pageable = PageRequest.of(getPageNumber(from, size), size);
-        return eventRepository.findAllByInitiator_Id(userId, pageable).stream()
+        return getEventsFullDtoWithViews(eventRepository.findAllByInitiator_Id(userId, pageable).stream()
                 .map(EventMapper::fromEventToEventFullDto)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
     @Override
     public EventFullDto getEvent(long userId, long eventId) {
-        return EventMapper.fromEventToEventFullDto(eventRepository.findById(eventId)
+        return getEventFullDtoWithViews(EventMapper.fromEventToEventFullDto(eventRepository.findById(eventId)
                 .orElseThrow(() -> new ObjectNotFoundException(
-                        String.format("Event with id=%d was not found", eventId))));
+                        String.format("Event with id=%d was not found", eventId)))));
 
     }
 
     @Override
     public EventFullDto getPublicEvent(long eventId) {
-        return EventMapper.fromEventToEventFullDto(eventRepository.findById(eventId)
+        return getEventFullDtoWithViews(EventMapper.fromEventToEventFullDto(eventRepository.findById(eventId)
                 .orElseThrow(() -> new ObjectNotFoundException(
-                        String.format("Event with id=%d was not found", eventId))));
+                        String.format("Event with id=%d was not found", eventId)))));
     }
 
     @Override
@@ -88,12 +89,11 @@ public class EventServiceImpl implements EventService {
                     break;
             }
         }
-        eventRepository.save(event);
-        return EventMapper.fromEventToEventFullDto(eventRepository.save(event));
+        return getEventFullDtoWithViews(EventMapper.fromEventToEventFullDto(eventRepository.save(event)));
     }
 
     @Override
-    public EventFullDto updateEventByAdmin (long eventId, EventAdminUpdateDto eventUpdateDto) {
+    public EventFullDto updateEventByAdmin(long eventId, EventAdminUpdateDto eventUpdateDto) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new ObjectNotFoundException(
                         String.format("Event with id=%d was not found", eventId)));
@@ -123,15 +123,14 @@ public class EventServiceImpl implements EventService {
                     break;
             }
         }
-        eventRepository.save(event);
-        return EventMapper.fromEventToEventFullDto(eventRepository.save(event));
+        return getEventFullDtoWithViews(EventMapper.fromEventToEventFullDto(eventRepository.save(event)));
     }
 
     @Override
     public List<EventFullDto> getEventByUserFilter(String text, List<Long> categories, Boolean paid,
-                                                    LocalDateTime rangeStart, LocalDateTime rangeEnd,
-                                                    Boolean onlyAvailable, EventSortType sort, int from,
-                                                    int size) {
+                                                   LocalDateTime rangeStart, LocalDateTime rangeEnd,
+                                                   Boolean onlyAvailable, EventSortType sort, int from,
+                                                   int size) {
         Pageable pageable = PageRequest.of(getPageNumber(from, size), size);
         QEvent qevent = QEvent.event;
         BooleanBuilder booleanBuilder = new BooleanBuilder();
@@ -163,12 +162,13 @@ public class EventServiceImpl implements EventService {
                     .collect(Collectors.toList());
         }
 
+        events = getEventsFullDtoWithViews(events);
         switch (sort) {
             case EVENT_DATE:
                 events.sort(Comparator.comparing(EventFullDto::getEventDate));
                 break;
             case VIEWS:
-                events.sort(Comparator.comparingInt(EventFullDto::getViews));
+                events.sort(Comparator.comparingLong(EventFullDto::getViews));
                 break;
         }
         return events;
@@ -176,9 +176,9 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventFullDto> getEventByAdminFilter(List<Long> users, List<EventState> states,
-                                                     List<Long> categories,
-                                                     LocalDateTime rangeStart, LocalDateTime rangeEnd,
-                                                     int from, int size) {
+                                                    List<Long> categories,
+                                                    LocalDateTime rangeStart, LocalDateTime rangeEnd,
+                                                    int from, int size) {
         Pageable pageable = PageRequest.of(getPageNumber(from, size), size);
         QEvent qevent = QEvent.event;
         BooleanBuilder booleanBuilder = new BooleanBuilder();
@@ -202,6 +202,7 @@ public class EventServiceImpl implements EventService {
                 .map(EventMapper::fromEventToEventFullDto)
                 .collect(Collectors.toList());
 
+        events = getEventsFullDtoWithViews(events);
         return events;
     }
 
@@ -241,11 +242,43 @@ public class EventServiceImpl implements EventService {
     private int getPageNumber(int from, int size) {
         return from / size;
     }
-     private void checkEventDate(LocalDateTime eventTime) {
-         if (eventTime.isBefore(LocalDateTime.now())) {
-             throw new InvalidParametersException(
-                     String.format("Event date can`t be in past."));
-         }
-     }
 
+    private void checkEventDate(LocalDateTime eventTime) {
+        if (eventTime.isBefore(LocalDateTime.now())) {
+            throw new InvalidParametersException(
+                    String.format("Event date can`t be in past."));
+        }
+    }
+
+    private List<EventFullDto> getEventsFullDtoWithViews(List<EventFullDto> events) {
+        List<String> uris = new ArrayList<>();
+        for (EventFullDto event : events) {
+            uris.add("/events/" + event.getId());
+        }
+        List<StatisticViewDto> views = statisticClient.getStatistic(LocalDateTime.now().minusYears(10),
+                LocalDateTime.now().plusYears(10), uris);
+
+        System.out.println(views);
+        System.out.println(views.get(0).getClass());
+
+        HashMap<Long, Long> viewsMap = new HashMap<>();
+
+        for (StatisticViewDto statView : views) {
+            long eventId = Long.parseLong(statView.getUri().split("/")[1]);
+            long hits = statView.getHits();
+            viewsMap.put(eventId, hits);
+        }
+        for (EventFullDto event : events) {
+            if (viewsMap.containsKey(event.getId())) {
+                event.setViews(viewsMap.get(event.getId()));
+            }
+        }
+        return events;
+    }
+
+    private EventFullDto getEventFullDtoWithViews(EventFullDto event) {
+        List<EventFullDto> events = getEventsFullDtoWithViews(List.of(event));
+        return events.get(0);
+
+    }
 }

@@ -34,5 +34,5 @@ public class EventFullDto {
     private UserShortDto initiator;
     private EventState state;
     private long confirmedRequests;
-    private int views;
+    private long views;
 }
