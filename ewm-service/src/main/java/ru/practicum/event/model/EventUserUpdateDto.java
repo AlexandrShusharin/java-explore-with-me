@@ -9,6 +9,5 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EventUserUpdateDto extends EventUpdateDto {
-    @NotNull
     private EventUserStateAction stateAction;
 }

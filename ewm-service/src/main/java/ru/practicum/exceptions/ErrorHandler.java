@@ -15,29 +15,32 @@ import java.util.Objects;
 @RestControllerAdvice
 public class ErrorHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({MethodArgumentNotValidException.class,
-            MethodArgumentTypeMismatchException.class,
-            MissingRequestValueException.class})
+    @ExceptionHandler({MissingRequestValueException.class, MethodArgumentNotValidException.class})
     public ErrorResponse handleValidationException(Exception e) {
         String message;
         if (e instanceof MethodArgumentNotValidException) {
             MethodArgumentNotValidException eValidation = (MethodArgumentNotValidException) e;
             message = Objects.requireNonNull(eValidation.getBindingResult().getFieldError()).getDefaultMessage();
-        } else if (e instanceof MethodArgumentTypeMismatchException) {
+        } else {
+            message = e.getMessage();
+        }
+        final String REASON = "Incorrectly made request.";
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, REASON, message, LocalDateTime.now());
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler({InvalidParametersException.class,
+            MethodArgumentTypeMismatchException.class, NonTransientDataAccessException.class})
+    public ErrorResponse handelConditionException(Exception e) {
+        String message;
+        if (e instanceof MethodArgumentTypeMismatchException) {
             MethodArgumentTypeMismatchException eValidation = (MethodArgumentTypeMismatchException) e;
             message = "Unknown state: " + eValidation.getValue().toString();
         } else {
             message = e.getMessage();
         }
-        final String REASON = "The required object was not found.";
-        return new ErrorResponse(HttpStatus.BAD_REQUEST, REASON, message, LocalDateTime.now());
-    }
-
-    @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler({NonTransientDataAccessException.class})
-    public ErrorResponse handelConditionExeption(Exception e) {
         final String REASON = "For the requested operation the conditions are not met.";
-        return new ErrorResponse(HttpStatus.CONFLICT, REASON, e.getMessage(), LocalDateTime.now());
+        return new ErrorResponse(HttpStatus.CONFLICT, REASON, message + e.getClass(), LocalDateTime.now());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -48,6 +51,7 @@ public class ErrorHandler {
 
     }
 
+/*
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleThrowable(final Throwable e) {
@@ -55,4 +59,5 @@ public class ErrorHandler {
         return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, REASON,
                 "Undefined error" + e.getClass(), LocalDateTime.now());
     }
+*/
 }

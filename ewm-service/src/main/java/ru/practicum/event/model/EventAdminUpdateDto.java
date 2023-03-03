@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class EventAdminUpdateDto extends EventUpdateDto{
-    @NotNull
     private EventAdminStateAction stateAction;
 }
 

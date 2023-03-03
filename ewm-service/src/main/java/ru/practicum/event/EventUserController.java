@@ -14,6 +14,7 @@ import ru.practicum.request.model.RequestStatusUpdateDto;
 import ru.practicum.request.model.RequestsUpdatedDto;
 import ru.practicum.request.service.RequestService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -26,7 +27,7 @@ public class EventUserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public EventFullDto addEvent(@RequestBody EventAddDto eventAddDto, @PathVariable long userId) {
+    public EventFullDto addEvent(@Valid @RequestBody EventAddDto eventAddDto, @PathVariable long userId) {
         return eventService.addEvent(userId, eventAddDto);
     }
 
@@ -47,8 +48,8 @@ public class EventUserController {
     @PatchMapping("/{eventId}")
     @ResponseStatus(HttpStatus.OK)
     public EventFullDto updateEvent(@PathVariable long userId, @PathVariable long eventId,
-                                    @RequestBody EventUserUpdateDto eventUpdateDto) {
-        return eventService.updateEvent(userId, eventId, eventUpdateDto);
+                                    @Valid @RequestBody EventUserUpdateDto eventUpdateDto) {
+        return eventService.updateEventByUser(userId, eventId, eventUpdateDto);
     }
 
     @GetMapping("/{eventId}/requests")

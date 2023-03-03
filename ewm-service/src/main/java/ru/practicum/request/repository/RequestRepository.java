@@ -18,7 +18,9 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     List<Request> findAllByIdInAndStatus(List<Long> ids, RequestStatus status);
 
-    @Query("SELECT COUNT(r) FROM Request r WHERE r.event.id = ?1 AND r.status = 'CONFIRMED'")
+    Request findFirstByRequester_IdAndEvent_Id(long requesterId, long eventId);
+
+/*    @Query("SELECT COUNT(r) FROM Request r WHERE r.event.id = ?1 AND r.status = 'CONFIRMED'")
     Long findCountConfirmedRequest(Long eventId);
 
     @Transactional
@@ -27,5 +29,7 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
     void updateRequestsStatus(List<Long> ids, RequestStatus status);
 
     @Query("SELECT r FROM Request r WHERE r.id IN ?1")
-    List<Request> findAllByIds(List<Long> ids);
+ */
+
+    List<Request> findAllByIdIn(List<Long> ids);
 }

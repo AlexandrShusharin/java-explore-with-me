@@ -51,7 +51,13 @@ public class StatisticServiceClient extends BaseClient {
         return get("/stats?start={start}&end={end}&unique={unique}", parameters);
     }
 
-    public ResponseEntity<Object> postStatistic(StatisticEventDto body) {
+    public ResponseEntity<Object> postStatistic(String app, String uri, String ip, LocalDateTime eventTime) {
+        StatisticEventDto body = StatisticEventDto.builder()
+                .application(app)
+                .uri(uri)
+                .ip(ip)
+                .eventTime(eventTime)
+                .build();
         return post("/hit", body);
     }
 

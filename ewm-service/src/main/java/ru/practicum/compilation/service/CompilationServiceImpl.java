@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.compilation.model.CompilationAddDto;
 import ru.practicum.compilation.model.CompilationDto;
+import ru.practicum.compilation.model.CompilationUpdateDto;
 import ru.practicum.compilation.repository.CompilationRepository;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.model.EventMapper;
@@ -44,13 +45,13 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     public CompilationDto updateCompilation(long compId,
-                                            CompilationAddDto compilationAddDto) {
+                                            CompilationUpdateDto compilationUpdateDto) {
         Compilation compilation = compilationRepository.getReferenceById(compId);
-        compilation.setTitle(compilationAddDto.getTitle());
-        compilation.setPinned(compilationAddDto.isPinned());
-        if (!compilationAddDto.getEvents().isEmpty()) {
+        compilation.setTitle(compilationUpdateDto.getTitle());
+        compilation.setPinned(compilationUpdateDto.isPinned());
+        if (!compilationUpdateDto.getEvents().isEmpty()) {
             List<Event> events = new ArrayList<>();
-            for (long eventId : compilationAddDto.getEvents()) {
+            for (long eventId : compilationUpdateDto.getEvents()) {
                 events.add(eventRepository.getReferenceById(eventId));
             }
             compilation.setEvents(events);

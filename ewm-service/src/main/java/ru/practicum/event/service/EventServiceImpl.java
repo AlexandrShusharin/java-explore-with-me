@@ -11,6 +11,7 @@ import ru.practicum.category.repository.CategoryRepository;
 import ru.practicum.event.model.*;
 import ru.practicum.event.model.QEvent;
 import ru.practicum.event.repository.EventRepository;
+import ru.practicum.exceptions.InvalidParametersException;
 import ru.practicum.exceptions.ObjectNotFoundException;
 import ru.practicum.location.model.LocationMapper;
 import ru.practicum.location.repository.LocationRepository;
@@ -29,11 +30,11 @@ public class EventServiceImpl implements EventService {
     private final LocationRepository locationRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
-    private final StatisticServiceClient statisticClient;
 
     @Override
     public EventFullDto addEvent(long userId, EventAddDto eventAddDto) {
         Event event = EventMapper.fromEventAddDtoToEvent(eventAddDto);
+        checkEventDate(event.getEventDate());
         event.setInitiator(userRepository.getReferenceById(userId));
         event.setCategory(categoryRepository.getReferenceById(eventAddDto.getCategory()));
         event.setLocation(locationRepository.save(LocationMapper.locationDtoToLocation(eventAddDto.getLocation())));
@@ -66,20 +67,26 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventFullDto updateEvent(long userId, long eventId, EventUserUpdateDto eventUpdateDto) {
+    public EventFullDto updateEventByUser(long userId, long eventId, EventUserUpdateDto eventUpdateDto) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new ObjectNotFoundException(
                         String.format("Event with id=%d was not found", eventId)));
+        if (event.getState().equals(EventState.PUBLISHED)) {
+            throw new InvalidParametersException(
+                    String.format("Event with id=%d published and can`t be edit.", event.getId()));
+        }
 
         event = setAndCheckEventUpdate(eventUpdateDto, event);
 
-        switch (eventUpdateDto.getStateAction()) {
-            case CANCEL_REVIEW:
-                event.setState(EventState.CANCELED);
-                break;
-            case SEND_TO_REVIEW:
-                event.setState(EventState.PENDING);
-                break;
+        if (eventUpdateDto.getStateAction() != null) {
+            switch (eventUpdateDto.getStateAction()) {
+                case CANCEL_REVIEW:
+                    event.setState(EventState.CANCELED);
+                    break;
+                case SEND_TO_REVIEW:
+                    event.setState(EventState.PENDING);
+                    break;
+            }
         }
         eventRepository.save(event);
         return EventMapper.fromEventToEventFullDto(eventRepository.save(event));
@@ -93,14 +100,28 @@ public class EventServiceImpl implements EventService {
 
         event = setAndCheckEventUpdate(eventUpdateDto, event);
 
-        switch (eventUpdateDto.getStateAction()) {
-            case PUBLISH_EVENT:
-                event.setState(EventState.PUBLISHED);
-                event.setPublishedOn(LocalDateTime.now());
-                break;
-            case REJECT_EVENT:
-                event.setState(EventState.CANCELED);
-                break;
+        if (eventUpdateDto.getStateAction() != null) {
+            switch (eventUpdateDto.getStateAction()) {
+                case PUBLISH_EVENT:
+                    switch (event.getState()) {
+                        case PUBLISHED:
+                            throw new InvalidParametersException(
+                                    String.format("Event with id=%d is already published.", event.getId()));
+                        case CANCELED:
+                            throw new InvalidParametersException(
+                                    String.format("Event with id=%d was canceled", event.getId()));
+                    }
+                    event.setState(EventState.PUBLISHED);
+                    event.setPublishedOn(LocalDateTime.now());
+                    break;
+                case REJECT_EVENT:
+                    if (event.getState().equals(EventState.PUBLISHED)) {
+                        throw new InvalidParametersException(
+                                String.format("Event with id=%d published and can`t be canceled.", event.getId()));
+                    }
+                    event.setState(EventState.CANCELED);
+                    break;
+            }
         }
         eventRepository.save(event);
         return EventMapper.fromEventToEventFullDto(eventRepository.save(event));
@@ -195,6 +216,7 @@ public class EventServiceImpl implements EventService {
             event.setDescription(eventUpdateDto.getDescription());
         }
         if (eventUpdateDto.getEventDate() != null && !eventUpdateDto.getEventDate().equals(event.getEventDate())) {
+            checkEventDate(eventUpdateDto.getEventDate());
             event.setEventDate(eventUpdateDto.getEventDate());
         }
         if (eventUpdateDto.getParticipantLimit() != null &&
@@ -219,5 +241,11 @@ public class EventServiceImpl implements EventService {
     private int getPageNumber(int from, int size) {
         return from / size;
     }
+     private void checkEventDate(LocalDateTime eventTime) {
+         if (eventTime.isBefore(LocalDateTime.now())) {
+             throw new InvalidParametersException(
+                     String.format("Event date can`t be in past."));
+         }
+     }
 
 }

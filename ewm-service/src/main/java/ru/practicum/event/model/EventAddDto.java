@@ -5,10 +5,7 @@ import lombok.*;
 import ru.practicum.category.model.Category;
 import ru.practicum.location.model.LocationDto;
 
-import javax.validation.constraints.Future;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
 @Getter
@@ -22,12 +19,11 @@ public class EventAddDto {
     private String title;
     @NotBlank
     private String annotation;
-    @NotBlank
+    @Positive
     private long category;
     @NotBlank
     private String description;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    @Future
     private LocalDateTime eventDate;
     @NotNull
     private boolean paid;

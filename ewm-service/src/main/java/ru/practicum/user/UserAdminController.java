@@ -8,6 +8,7 @@ import ru.practicum.user.model.UserDto;
 import ru.practicum.user.repository.UserRepository;
 import ru.practicum.user.service.UserService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -21,7 +22,7 @@ public class UserAdminController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto addUser(@RequestBody UserDto userDto) {
+    public UserDto addUser(@Valid @RequestBody UserDto userDto) {
         return userService.addUser(userDto);
     }
 

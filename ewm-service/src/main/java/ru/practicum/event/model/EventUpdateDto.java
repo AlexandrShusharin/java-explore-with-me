@@ -3,10 +3,7 @@ package ru.practicum.event.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
-import javax.validation.constraints.Future;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
 @Getter
@@ -16,21 +13,15 @@ import java.time.LocalDateTime;
 @Builder
 public class EventUpdateDto{
     protected long id;
-    @NotBlank
     protected String title;
-    @NotBlank
     protected String annotation;
-    @NotBlank
+    @Positive
     protected Long category;
-    @NotBlank
     protected String description;
-    @Future
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     protected LocalDateTime eventDate;
-    @NotNull
     protected Boolean paid;
     @PositiveOrZero
     protected Integer participantLimit;
-    @NotNull
     protected Boolean requestModeration;
 }
