@@ -28,16 +28,15 @@ public class EventAdminController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<EventShortDto> getAllEvents(@RequestParam List<Long> users,
-                                            @RequestParam List<EventState> states,
-                                            @RequestParam List<Long> categories,
+    public List<EventFullDto> getAllEvents(@RequestParam (required = false) List<Long> users,
+                                            @RequestParam (required = false) List<EventState> states,
+                                            @RequestParam (required = false) List<Long> categories,
                                             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                            @RequestParam LocalDateTime rangeStart,
+                                            @RequestParam (required = false) LocalDateTime rangeStart,
                                             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                            @RequestParam LocalDateTime rangeEnd,
+                                            @RequestParam (required = false) LocalDateTime rangeEnd,
                                             @RequestParam(defaultValue = "0") int from,
                                             @RequestParam(defaultValue = "1000000") int size) {
         return eventService.getEventByAdminFilter(users, states, categories, rangeStart, rangeEnd, from, size);
     }
-
 }

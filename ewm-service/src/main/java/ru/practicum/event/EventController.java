@@ -29,18 +29,17 @@ public class EventController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<EventShortDto> getAllEvents(@RequestParam String text,
-                                            @RequestParam List<Long> categories,
+    public List<EventFullDto> getAllEvents(@RequestParam(required = false) String text,
+                                            @RequestParam(required = false) List<Long> categories,
                                             @RequestParam (defaultValue = "false") Boolean paid,
                                             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                            @RequestParam LocalDateTime rangeStart,
+                                            @RequestParam (required = false) LocalDateTime rangeStart,
                                             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                            @RequestParam LocalDateTime rangeEnd,
+                                            @RequestParam (required = false) LocalDateTime rangeEnd,
                                             @RequestParam(defaultValue = "false") Boolean onlyAvailable,
-                                            @RequestParam EventSortType sort,
+                                            @RequestParam (defaultValue = "VIEWS") EventSortType sort,
                                             @RequestParam(defaultValue = "0") int from,
                                             @RequestParam(defaultValue = "1000000") int size) {
-
         return eventService.getEventByUserFilter(text, categories, paid, rangeStart, rangeEnd, onlyAvailable,
                 sort, from, size);
     }

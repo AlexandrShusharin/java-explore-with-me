@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.category.model.CategoryDto;
 import ru.practicum.category.model.CategoryMapper;
 import ru.practicum.category.repository.CategoryRepository;
+import ru.practicum.exceptions.ObjectNotFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,7 +40,8 @@ public class CategoryServiceImpl implements CategoryService{
     @Override
     public CategoryDto getCategory(Long catId) {
         return  CategoryMapper.fromCategoryToCategoryDto(
-                categoryRepository.findById(catId).orElseThrow(() -> new RuntimeException("Ошибка")));
+                categoryRepository.findById(catId).orElseThrow(() -> new ObjectNotFoundException(
+                        String.format("Category with id=%d was not found", catId))));
     }
 
     @Override

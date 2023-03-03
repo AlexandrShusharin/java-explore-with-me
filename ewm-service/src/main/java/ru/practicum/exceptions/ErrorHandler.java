@@ -17,8 +17,7 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({MethodArgumentNotValidException.class,
             MethodArgumentTypeMismatchException.class,
-            MissingRequestValueException.class,
-            NonTransientDataAccessException.class})
+            MissingRequestValueException.class})
     public ErrorResponse handleValidationException(Exception e) {
         String message;
         if (e instanceof MethodArgumentNotValidException) {
@@ -32,6 +31,13 @@ public class ErrorHandler {
         }
         final String REASON = "The required object was not found.";
         return new ErrorResponse(HttpStatus.BAD_REQUEST, REASON, message, LocalDateTime.now());
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler({NonTransientDataAccessException.class})
+    public ErrorResponse handelConditionExeption(Exception e) {
+        final String REASON = "For the requested operation the conditions are not met.";
+        return new ErrorResponse(HttpStatus.CONFLICT, REASON, e.getMessage(), LocalDateTime.now());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

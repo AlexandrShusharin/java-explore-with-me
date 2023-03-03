@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.event.model.EventAddDto;
 import ru.practicum.event.model.EventFullDto;
 import ru.practicum.event.model.EventUpdateDto;
+import ru.practicum.event.model.EventUserUpdateDto;
 import ru.practicum.event.service.EventService;
 import ru.practicum.request.model.RequestDto;
 import ru.practicum.request.model.RequestStatusUpdateDto;
@@ -46,7 +47,7 @@ public class EventUserController {
     @PatchMapping("/{eventId}")
     @ResponseStatus(HttpStatus.OK)
     public EventFullDto updateEvent(@PathVariable long userId, @PathVariable long eventId,
-                                    @RequestBody EventUpdateDto eventUpdateDto) {
+                                    @RequestBody EventUserUpdateDto eventUpdateDto) {
         return eventService.updateEvent(userId, eventId, eventUpdateDto);
     }
 

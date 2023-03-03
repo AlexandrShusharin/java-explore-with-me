@@ -54,7 +54,7 @@ public class EventServiceImpl implements EventService {
     public EventFullDto getEvent(long userId, long eventId) {
         return EventMapper.fromEventToEventFullDto(eventRepository.findById(eventId)
                 .orElseThrow(() -> new ObjectNotFoundException(
-                        String.format("Event with id={} was not found", eventId))));
+                        String.format("Event with id=%d was not found", eventId))));
 
     }
 
@@ -62,42 +62,17 @@ public class EventServiceImpl implements EventService {
     public EventFullDto getPublicEvent(long eventId) {
         return EventMapper.fromEventToEventFullDto(eventRepository.findById(eventId)
                 .orElseThrow(() -> new ObjectNotFoundException(
-                        String.format("Event with id={} was not found", eventId))));
+                        String.format("Event with id=%d was not found", eventId))));
     }
 
     @Override
-    public EventFullDto updateEvent(long userId, long eventId, EventUpdateDto eventUpdateDto) {
+    public EventFullDto updateEvent(long userId, long eventId, EventUserUpdateDto eventUpdateDto) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new ObjectNotFoundException(
-                        String.format("Event with id={} was not found", eventId)));
-        if (eventUpdateDto.getTitle() != null && !eventUpdateDto.getTitle().equals(event.getTitle())) {
-            event.setTitle(eventUpdateDto.getTitle());
-        }
-        if (eventUpdateDto.getAnnotation() != null && !eventUpdateDto.getTitle().equals(event.getAnnotation())) {
-            event.setAnnotation(eventUpdateDto.getAnnotation());
-        }
-        if (eventUpdateDto.getDescription() != null && !eventUpdateDto.getDescription().equals(event.getDescription())) {
-            event.setDescription(eventUpdateDto.getDescription());
-        }
-        if (eventUpdateDto.getEventDate() != null && !eventUpdateDto.getEventDate().equals(event.getEventDate())) {
-            event.setEventDate(eventUpdateDto.getEventDate());
-        }
-        if (eventUpdateDto.getParticipantLimit() != null &&
-                !eventUpdateDto.getParticipantLimit().equals(event.getParticipantLimit())) {
-            event.setParticipantLimit(eventUpdateDto.getParticipantLimit());
-        }
-        if (eventUpdateDto.getPaid() != null &&
-                !eventUpdateDto.getPaid().equals(event.isPaid())) {
-            event.setPaid(eventUpdateDto.getPaid());
-        }
-        if (eventUpdateDto.getRequestModeration() != null &&
-                !eventUpdateDto.getRequestModeration().equals(event.isRequestModeration())) {
-            event.setRequestModeration(eventUpdateDto.getRequestModeration());
-        }
-        if (eventUpdateDto.getCategory() != null &&
-                !eventUpdateDto.getCategory().equals(event.getCategory().getId())) {
-            event.setCategory(categoryRepository.getReferenceById(eventUpdateDto.getCategory()));
-        }
+                        String.format("Event with id=%d was not found", eventId)));
+
+        event = setAndCheckEventUpdate(eventUpdateDto, event);
+
         switch (eventUpdateDto.getStateAction()) {
             case CANCEL_REVIEW:
                 event.setState(EventState.CANCELED);
@@ -111,11 +86,14 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventFullDto updateEventByAdmin (long eventId, EventAdminUpdateDto eventAdminUpdateDto) {
+    public EventFullDto updateEventByAdmin (long eventId, EventAdminUpdateDto eventUpdateDto) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new ObjectNotFoundException(
-                        String.format("Event with id={} was not found", eventId)));
-        switch (eventAdminUpdateDto.getStateAction()) {
+                        String.format("Event with id=%d was not found", eventId)));
+
+        event = setAndCheckEventUpdate(eventUpdateDto, event);
+
+        switch (eventUpdateDto.getStateAction()) {
             case PUBLISH_EVENT:
                 event.setState(EventState.PUBLISHED);
                 event.setPublishedOn(LocalDateTime.now());
@@ -129,7 +107,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventShortDto> getEventByUserFilter(String text, List<Long> categories, Boolean paid,
+    public List<EventFullDto> getEventByUserFilter(String text, List<Long> categories, Boolean paid,
                                                     LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                                     Boolean onlyAvailable, EventSortType sort, int from,
                                                     int size) {
@@ -172,11 +150,11 @@ public class EventServiceImpl implements EventService {
                 events.sort(Comparator.comparingInt(EventFullDto::getViews));
                 break;
         }
-        return events.stream().map(EventMapper::fromEventFullDtoEventShortDto).collect(Collectors.toList());
+        return events;
     }
 
     @Override
-    public List<EventShortDto> getEventByAdminFilter(List<Long> users, List<EventState> states,
+    public List<EventFullDto> getEventByAdminFilter(List<Long> users, List<EventState> states,
                                                      List<Long> categories,
                                                      LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                                      int from, int size) {
@@ -203,9 +181,40 @@ public class EventServiceImpl implements EventService {
                 .map(EventMapper::fromEventToEventFullDto)
                 .collect(Collectors.toList());
 
-        return events.stream().map(EventMapper::fromEventFullDtoEventShortDto).collect(Collectors.toList());
+        return events;
     }
 
+    private Event setAndCheckEventUpdate(EventUpdateDto eventUpdateDto, Event event) {
+        if (eventUpdateDto.getTitle() != null && !eventUpdateDto.getTitle().equals(event.getTitle())) {
+            event.setTitle(eventUpdateDto.getTitle());
+        }
+        if (eventUpdateDto.getAnnotation() != null && !eventUpdateDto.getTitle().equals(event.getAnnotation())) {
+            event.setAnnotation(eventUpdateDto.getAnnotation());
+        }
+        if (eventUpdateDto.getDescription() != null && !eventUpdateDto.getDescription().equals(event.getDescription())) {
+            event.setDescription(eventUpdateDto.getDescription());
+        }
+        if (eventUpdateDto.getEventDate() != null && !eventUpdateDto.getEventDate().equals(event.getEventDate())) {
+            event.setEventDate(eventUpdateDto.getEventDate());
+        }
+        if (eventUpdateDto.getParticipantLimit() != null &&
+                !eventUpdateDto.getParticipantLimit().equals(event.getParticipantLimit())) {
+            event.setParticipantLimit(eventUpdateDto.getParticipantLimit());
+        }
+        if (eventUpdateDto.getPaid() != null &&
+                !eventUpdateDto.getPaid().equals(event.isPaid())) {
+            event.setPaid(eventUpdateDto.getPaid());
+        }
+        if (eventUpdateDto.getRequestModeration() != null &&
+                !eventUpdateDto.getRequestModeration().equals(event.isRequestModeration())) {
+            event.setRequestModeration(eventUpdateDto.getRequestModeration());
+        }
+        if (eventUpdateDto.getCategory() != null &&
+                !eventUpdateDto.getCategory().equals(event.getCategory().getId())) {
+            event.setCategory(categoryRepository.getReferenceById(eventUpdateDto.getCategory()));
+        }
+        return event;
+    }
 
     private int getPageNumber(int from, int size) {
         return from / size;

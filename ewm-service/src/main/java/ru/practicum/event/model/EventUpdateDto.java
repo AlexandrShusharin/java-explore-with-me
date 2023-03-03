@@ -15,24 +15,22 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class EventUpdateDto{
-    private long id;
+    protected long id;
     @NotBlank
-    private String title;
+    protected String title;
     @NotBlank
-    private String annotation;
+    protected String annotation;
     @NotBlank
-    private Long category;
+    protected Long category;
     @NotBlank
-    private String description;
+    protected String description;
     @Future
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime eventDate;
+    protected LocalDateTime eventDate;
     @NotNull
-    private Boolean paid;
+    protected Boolean paid;
     @PositiveOrZero
-    private Integer participantLimit;
+    protected Integer participantLimit;
     @NotNull
-    private Boolean requestModeration;
-    @NotNull
-    private EventUserStateAction stateAction;
+    protected Boolean requestModeration;
 }

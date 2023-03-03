@@ -35,8 +35,7 @@ public class EventMapper {
                 .location(LocationMapper.locationToLocationDto(event.getLocation()))
                 .initiator(UserMapper.fromUserToUserShortDto(event.getInitiator()))
                 .publishedOn(event.getPublishedOn())
-                .confirmedRequests(event.getRequests().stream()
-                        .filter(o -> o.getStatus().equals(RequestStatus.CONFIRMED)).count())
+                .confirmedRequests(getConfirmedRequestsCount(event))
                 .views(100)
                 .build();
     }
@@ -66,9 +65,16 @@ public class EventMapper {
                 .eventDate(event.getEventDate())
                 .paid(event.isPaid())
                 .initiator(UserMapper.fromUserToUserShortDto(event.getInitiator()))
-                .confirmedRequests(event.getRequests().stream()
-                        .filter(o -> o.getStatus().equals(RequestStatus.CONFIRMED)).count())
+                .confirmedRequests(getConfirmedRequestsCount(event))
                 .views(100)
                 .build();
+    }
+    private static long getConfirmedRequestsCount(Event event) {
+        if (event.getRequests() != null && event.getRequests().size() > 0) {
+            return event.getRequests().stream()
+                    .filter(o -> o.getStatus().equals(RequestStatus.CONFIRMED)).count();
+        } else {
+            return 0;
+        }
     }
 }

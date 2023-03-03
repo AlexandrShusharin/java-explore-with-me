@@ -13,26 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class EventAdminUpdateDto{
-    private long id;
-    @NotBlank
-    private String title;
-    @NotBlank
-    private String annotation;
-    @NotBlank
-    private long category;
-    @NotBlank
-    private String description;
-    @Future
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime eventDate;
-    @NotNull
-    private boolean paid;
-    @PositiveOrZero
-    private int participantLimit;
-    @NotNull
-    private boolean requestModeration;
+public class EventAdminUpdateDto extends EventUpdateDto{
     @NotNull
     private EventAdminStateAction stateAction;
 }
