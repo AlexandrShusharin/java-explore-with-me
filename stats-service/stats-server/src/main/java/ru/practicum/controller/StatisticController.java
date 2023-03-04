@@ -2,6 +2,7 @@ package ru.practicum.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.StatisticEventDto;
 import ru.practicum.StatisticViewDto;
@@ -16,11 +17,13 @@ public class StatisticController {
     private final StatisticService statisticService;
 
     @PostMapping(path = "/hit")
+    @ResponseStatus(HttpStatus.CREATED)
     public StatisticEventDto addStatistic(@RequestBody StatisticEventDto eventDto) {
         return statisticService.addEvent(eventDto);
     }
 
     @GetMapping(path = "/stats")
+    @ResponseStatus(HttpStatus.OK)
     public List<StatisticViewDto> getStatistic(@RequestParam("start")
                                                @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
                                                LocalDateTime startTime,
