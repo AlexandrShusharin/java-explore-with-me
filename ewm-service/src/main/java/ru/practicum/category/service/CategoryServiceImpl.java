@@ -46,7 +46,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto getCategory(Long catId) {
-        return  CategoryMapper.fromCategoryToCategoryDto(
+        return CategoryMapper.fromCategoryToCategoryDto(
                 categoryRepository.findById(catId).orElseThrow(() -> new ObjectNotFoundException(
                         String.format("Category with id=%d was not found", catId))));
     }
