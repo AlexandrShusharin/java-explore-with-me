@@ -50,14 +50,4 @@ public class ErrorHandler {
         return new ErrorResponse(HttpStatus.NOT_FOUND, REASON, e.getMessage(), LocalDateTime.now());
 
     }
-
-/*
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleThrowable(final Throwable e) {
-        final String REASON = "Internal server error.";
-        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, REASON,
-                "Undefined error" + e.getClass(), LocalDateTime.now());
-    }
-*/
 }

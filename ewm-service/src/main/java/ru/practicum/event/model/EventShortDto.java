@@ -2,7 +2,6 @@ package ru.practicum.event.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-import ru.practicum.category.model.Category;
 import ru.practicum.category.model.CategoryEventDto;
 import ru.practicum.user.model.UserShortDto;
 
@@ -24,5 +23,5 @@ public class EventShortDto {
     private boolean paid;
     private UserShortDto initiator;
     private long confirmedRequests;
-    private int views;
+    private long views;
 }

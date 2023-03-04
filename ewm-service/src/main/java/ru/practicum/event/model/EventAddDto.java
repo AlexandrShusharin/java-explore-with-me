@@ -2,7 +2,6 @@ package ru.practicum.event.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-import ru.practicum.category.model.Category;
 import ru.practicum.location.model.LocationDto;
 
 import javax.validation.constraints.*;

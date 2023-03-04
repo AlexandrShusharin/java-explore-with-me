@@ -1,10 +1,13 @@
 package ru.practicum.event.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.BooleanBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.practicum.StatisticServiceClient;
 import ru.practicum.StatisticViewDto;
@@ -246,28 +249,23 @@ public class EventServiceImpl implements EventService {
     private void checkEventDate(LocalDateTime eventTime) {
         if (eventTime.isBefore(LocalDateTime.now())) {
             throw new InvalidParametersException(
-                    String.format("Event date can`t be in past."));
+                    "Event date can`t be in past.");
         }
     }
 
-    private List<EventFullDto> getEventsFullDtoWithViews(List<EventFullDto> events) {
-        List<String> uris = new ArrayList<>();
-        for (EventFullDto event : events) {
-            uris.add("/events/" + event.getId());
+    @Override
+    public List<EventFullDto> getEventsFullDtoWithViews(List<EventFullDto> events) {
+        if (events == null || events.isEmpty()) {
+            return new ArrayList<>();
         }
-        List<StatisticViewDto> views = statisticClient.getStatistic(LocalDateTime.now().minusYears(10),
-                LocalDateTime.now().plusYears(10), uris);
+        LocalDateTime minDate = events.stream()
+                .sorted(Comparator.comparing(EventFullDto::getCreatedOn))
+                .findFirst().get().getCreatedOn();
 
-        System.out.println(views);
-        System.out.println(views.get(0).getClass());
+        List<String> uris = events.stream().map(o ->"/events/" + o.getId()).collect(Collectors.toList());
 
-        HashMap<Long, Long> viewsMap = new HashMap<>();
+        HashMap<Long, Long> viewsMap = getEventsViews(uris, minDate);
 
-        for (StatisticViewDto statView : views) {
-            long eventId = Long.parseLong(statView.getUri().split("/")[1]);
-            long hits = statView.getHits();
-            viewsMap.put(eventId, hits);
-        }
         for (EventFullDto event : events) {
             if (viewsMap.containsKey(event.getId())) {
                 event.setViews(viewsMap.get(event.getId()));
@@ -281,4 +279,21 @@ public class EventServiceImpl implements EventService {
         return events.get(0);
 
     }
+
+    private HashMap<Long, Long> getEventsViews(List<String> uris, LocalDateTime startDate) {
+        ResponseEntity<Object> responseEntity = statisticClient.getStatistic(startDate, LocalDateTime.now(), uris);
+        ObjectMapper mapper = new ObjectMapper();
+        List<StatisticViewDto> views = mapper.convertValue(responseEntity.getBody(),
+                new TypeReference<List<StatisticViewDto>>() { });
+
+        HashMap<Long, Long> viewsMap = new HashMap<>();
+
+        for (StatisticViewDto statView : views) {
+            long hits = statView.getHits();
+            long eventId = Long.parseLong(statView.getUri().split("/")[2]);
+            viewsMap.put(eventId, hits);
+        }
+        return viewsMap;
+    }
+
 }

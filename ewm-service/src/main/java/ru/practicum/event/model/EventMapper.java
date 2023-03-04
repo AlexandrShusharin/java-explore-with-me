@@ -6,7 +6,6 @@ import ru.practicum.request.model.RequestStatus;
 import ru.practicum.user.model.UserMapper;
 
 public class EventMapper {
-    //Мапперы для ДТО
     public static Event fromEventAddDtoToEvent(EventAddDto eventAddDto) {
         return Event.builder()
                 .title(eventAddDto.getTitle())
@@ -40,20 +39,21 @@ public class EventMapper {
                 .build();
     }
 
-    public static EventShortDto fromEventToEventShortDto(Event event) {
+    public static EventShortDto fromEventFullDtoToEventShortDto(EventFullDto event) {
         return EventShortDto.builder()
                 .id(event.getId())
                 .title(event.getTitle())
                 .annotation(event.getAnnotation())
                 .description(event.getDescription())
-                .category(CategoryMapper.fromCategoryToCategoryEventDto(event.getCategory()))
+                .category(event.getCategory())
                 .eventDate(event.getEventDate())
                 .paid(event.isPaid())
-                .initiator(UserMapper.fromUserToUserShortDto(event.getInitiator()))
-                .confirmedRequests(getConfirmedRequestsCount(event))
-                .views(0)
+                .initiator(event.getInitiator())
+                .confirmedRequests(event.getConfirmedRequests())
+                .views(event.getViews())
                 .build();
     }
+
     private static long getConfirmedRequestsCount(Event event) {
         if (event.getRequests() != null && event.getRequests().size() > 0) {
             return event.getRequests().stream()

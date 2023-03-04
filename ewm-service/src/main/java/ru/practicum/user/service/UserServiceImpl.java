@@ -19,26 +19,15 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDto getUser(long userId) {
-        return UserMapper.fromUserToUserDto(userRepository.findById(userId).
-                orElseThrow(() -> new RuntimeException("Ошибка")));
-    }
-
-    @Override
     public List<UserDto> getUsers(List<Long> usersIdList, int from, int size) {
         Pageable pageable = PageRequest.of(getPageNumber(from, size), size);
-        return userRepository.findAllByIdIn(usersIdList,pageable).stream()
+        return userRepository.findAllByIdIn(usersIdList, pageable).stream()
                 .map(UserMapper::fromUserToUserDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public UserDto addUser(UserDto userDto) {
-        return UserMapper.fromUserToUserDto(userRepository.save(UserMapper.fromUserDtoToUser(userDto)));
-    }
-
-    @Override
-    public UserDto updateUser(UserDto userDto) {
         return UserMapper.fromUserToUserDto(userRepository.save(UserMapper.fromUserDtoToUser(userDto)));
     }
 

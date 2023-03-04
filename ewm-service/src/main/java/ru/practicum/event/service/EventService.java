@@ -16,15 +16,17 @@ public interface EventService {
 
     EventFullDto updateEventByUser(long userId, long eventId, EventUserUpdateDto eventUpdateDto);
 
-    EventFullDto updateEventByAdmin (long eventId, EventAdminUpdateDto eventAdminUpdateDto);
+    EventFullDto updateEventByAdmin(long eventId, EventAdminUpdateDto eventAdminUpdateDto);
 
     List<EventFullDto> getEventByUserFilter(String text, List<Long> categories, Boolean paid,
-                                             LocalDateTime rangeStart, LocalDateTime rangeEnd,
-                                             Boolean onlyAvailable, EventSortType sort, int from,
-                                             int size);
+                                            LocalDateTime rangeStart, LocalDateTime rangeEnd,
+                                            Boolean onlyAvailable, EventSortType sort, int from,
+                                            int size);
 
     List<EventFullDto> getEventByAdminFilter(List<Long> users, List<EventState> states,
-                                              List<Long> categories,
-                                              LocalDateTime rangeStart, LocalDateTime rangeEnd,
-                                              int from, int size);
+                                             List<Long> categories,
+                                             LocalDateTime rangeStart, LocalDateTime rangeEnd,
+                                             int from, int size);
+
+    List<EventFullDto> getEventsFullDtoWithViews(List<EventFullDto> events);
 }

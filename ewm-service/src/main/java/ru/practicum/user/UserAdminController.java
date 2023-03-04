@@ -17,8 +17,6 @@ import java.util.List;
 @RequestMapping("/admin/users")
 public class UserAdminController {
     private final UserService userService;
-    private final UserRepository userRepository;
-
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -29,9 +27,8 @@ public class UserAdminController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable long id) {
-        userRepository.deleteById(id);
+        userService.deleteUser(id);
     }
-
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)

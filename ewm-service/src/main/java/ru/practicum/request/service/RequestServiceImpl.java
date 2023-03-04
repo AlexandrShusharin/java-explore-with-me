@@ -32,19 +32,19 @@ public class RequestServiceImpl implements RequestService {
             throw new InvalidParametersException(
                     String.format("Request with user_id=%d and event_id=%d is already exist", userId, eventId));
         }
-        ;
+
         if (userId == event.getInitiator().getId()) {
             throw new InvalidParametersException(
                     String.format("User with user_id=%d is owner of event with event_id=%d", userId, eventId));
         }
-        ;
+
         if (!event.getState().equals(EventState.PUBLISHED)) {
             throw new InvalidParametersException(
-                    String.format("Event with event_id=%d is not published", userId, eventId));
+                    String.format("Event with event_id=%d is not published", eventId));
         }
         if (isEventRequestOverloaded(event)) {
             throw new InvalidParametersException(
-                    String.format("Event with event_id=%d is already full.", userId, eventId));
+                    String.format("Event with event_id=%d is already full.", eventId));
         }
 
         Request request = Request.builder()
@@ -131,5 +131,4 @@ public class RequestServiceImpl implements RequestService {
                 .filter(o -> o.getStatus().equals(RequestStatus.CONFIRMED))
                 .count() >= event.getParticipantLimit());
     }
-
 }

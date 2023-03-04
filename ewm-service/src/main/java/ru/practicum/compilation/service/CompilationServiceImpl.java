@@ -11,9 +11,10 @@ import ru.practicum.compilation.model.CompilationDto;
 import ru.practicum.compilation.model.CompilationUpdateDto;
 import ru.practicum.compilation.repository.CompilationRepository;
 import ru.practicum.event.model.Event;
+import ru.practicum.event.model.EventFullDto;
 import ru.practicum.event.model.EventMapper;
 import ru.practicum.event.repository.EventRepository;
-import ru.practicum.request.repository.RequestRepository;
+import ru.practicum.event.service.EventService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 public class CompilationServiceImpl implements CompilationService {
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
+    private final EventService eventService;
 
 
     @Override
@@ -77,16 +79,20 @@ public class CompilationServiceImpl implements CompilationService {
                 .collect(Collectors.toList());
     }
 
-
     private CompilationDto compilationToCompilationDto(Compilation compilation) {
-        return CompilationDto.builder()
+        CompilationDto compilationDto = CompilationDto.builder()
                 .id(compilation.getId())
                 .title(compilation.getTitle())
                 .pinned(compilation.isPinned())
-                .events(compilation.getEvents().stream()
-                        .map(EventMapper::fromEventToEventShortDto)
-                        .collect(Collectors.toList()))
                 .build();
+        List<EventFullDto> events = eventService.getEventsFullDtoWithViews(
+                compilation.getEvents().stream()
+                        .map(EventMapper::fromEventToEventFullDto)
+                        .collect(Collectors.toList()));
+        compilationDto.setEvents(events.stream()
+                .map(EventMapper::fromEventFullDtoToEventShortDto)
+                .collect(Collectors.toList()));
+        return compilationDto;
     }
 
     private int getPageNumber(int from, int size) {
