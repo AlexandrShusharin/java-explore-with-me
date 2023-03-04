@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.user.model.UserDto;
-import ru.practicum.user.repository.UserRepository;
 import ru.practicum.user.service.UserService;
 
 import javax.validation.Valid;

@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Service
 @Primary
 @RequiredArgsConstructor
-public class CategoryServiceImpl implements CategoryService{
+public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
 
     @Override
@@ -51,6 +51,7 @@ public class CategoryServiceImpl implements CategoryService{
                 .map(CategoryMapper::fromCategoryToCategoryDto)
                 .collect(Collectors.toList());
     }
+
     private int getPageNumber(int from, int size) {
         return from / size;
     }

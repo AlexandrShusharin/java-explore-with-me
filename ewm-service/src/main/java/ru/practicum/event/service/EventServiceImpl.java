@@ -262,7 +262,7 @@ public class EventServiceImpl implements EventService {
                 .sorted(Comparator.comparing(EventFullDto::getCreatedOn))
                 .findFirst().get().getCreatedOn();
 
-        List<String> uris = events.stream().map(o ->"/events/" + o.getId()).collect(Collectors.toList());
+        List<String> uris = events.stream().map(o -> "/events/" + o.getId()).collect(Collectors.toList());
 
         HashMap<Long, Long> viewsMap = getEventsViews(uris, minDate);
 

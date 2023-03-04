@@ -21,7 +21,7 @@ import java.util.List;
 public class EventController {
     private final EventService eventService;
     private final StatisticServiceClient statisticClient;
-    private final String APP_NAME = "ewm-main-service";
+    private static final String APP_NAME = "ewm-main-service";
 
     @GetMapping("/{eventId}")
     @ResponseStatus(HttpStatus.OK)
