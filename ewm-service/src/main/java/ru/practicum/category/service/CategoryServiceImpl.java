@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.practicum.category.model.Category;
 import ru.practicum.category.model.CategoryDto;
 import ru.practicum.category.model.CategoryMapper;
 import ru.practicum.category.repository.CategoryRepository;
@@ -27,13 +28,19 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto updateCategory(Long catId, CategoryDto categoryDto) {
-        categoryDto.setId(catId);
+        Category category = categoryRepository.findById(catId).orElseThrow(() -> new ObjectNotFoundException(
+                String.format("Category with id=%d was not found", catId)));
+        if (categoryDto.getName() != null && !categoryDto.getName().equals(category.getName())) {
+            category.setName(categoryDto.getName());
+        }
         return CategoryMapper.fromCategoryToCategoryDto(
-                categoryRepository.save(CategoryMapper.fromCategoryDtoToCategory(categoryDto)));
+                categoryRepository.save(category));
     }
 
     @Override
     public void deleteCategory(Long catId) {
+        categoryRepository.findById(catId).orElseThrow(() -> new ObjectNotFoundException(
+                String.format("Category with id=%d was not found", catId)));
         categoryRepository.deleteById(catId);
     }
 
