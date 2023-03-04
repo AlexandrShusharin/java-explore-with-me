@@ -1,6 +1,9 @@
 package ru.practicum.location.model;
 
-public class LocationMapper {
+public final class LocationMapper {
+    private LocationMapper() {
+    }
+
     public static LocationDto locationToLocationDto(Location location) {
         return LocationDto.builder()
                 .lat(location.getLat())

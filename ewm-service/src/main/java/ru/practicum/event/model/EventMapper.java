@@ -5,7 +5,10 @@ import ru.practicum.location.model.LocationMapper;
 import ru.practicum.request.model.RequestStatus;
 import ru.practicum.user.model.UserMapper;
 
-public class EventMapper {
+public final class EventMapper {
+    private EventMapper() {
+    }
+
     public static Event fromEventAddDtoToEvent(EventAddDto eventAddDto) {
         return Event.builder()
                 .title(eventAddDto.getTitle())

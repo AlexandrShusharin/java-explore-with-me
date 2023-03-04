@@ -1,6 +1,9 @@
 package ru.practicum.user.model;
 
-public class UserMapper {
+public final class UserMapper {
+    private UserMapper() {
+    }
+
     public static User fromUserDtoToUser(UserDto userDto) {
         return User.builder()
                 .id(userDto.getId())
@@ -23,5 +26,4 @@ public class UserMapper {
                 .name(user.getName())
                 .build();
     }
-
 }

@@ -28,6 +28,4 @@ public class CategoryController {
     public CategoryDto getCategory(@PathVariable Long id) {
         return categoryService.getCategory(id);
     }
-
-
 }

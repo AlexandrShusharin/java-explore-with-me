@@ -1,6 +1,9 @@
 package ru.practicum.category.model;
 
-public class CategoryMapper {
+public final class CategoryMapper {
+    private CategoryMapper() {
+    }
+
     public static CategoryDto fromCategoryToCategoryDto(Category category) {
         return CategoryDto.builder()
                 .id(category.getId())
