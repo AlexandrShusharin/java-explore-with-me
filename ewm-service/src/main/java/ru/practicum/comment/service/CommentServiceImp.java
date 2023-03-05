@@ -77,6 +77,7 @@ public class CommentServiceImp implements CommentService {
                 String.format("Comment with id=%d was not found", commentId)));
         commentRepository.deleteById(commentId);
     }
+
     private int getPageNumber(int from, int size) {
         return from / size;
     }

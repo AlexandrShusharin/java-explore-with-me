@@ -16,6 +16,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class CommentUserController {
     private final CommentService commentService;
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CommentDto addComment(@PathVariable long userId, @RequestParam long eventId,

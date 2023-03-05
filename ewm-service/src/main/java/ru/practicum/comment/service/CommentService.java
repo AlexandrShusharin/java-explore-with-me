@@ -6,7 +6,7 @@ import ru.practicum.comment.model.CommentDto;
 import java.util.List;
 
 public interface CommentService {
-    CommentDto addComment(long UserId, long eventId, CommentAddDto commentAddDto);
+    CommentDto addComment(long userId, long eventId, CommentAddDto commentAddDto);
 
     CommentDto getComment(long commentId);
 
