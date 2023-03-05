@@ -40,7 +40,7 @@ public class ErrorHandler {
             message = e.getMessage();
         }
         final String REASON = "For the requested operation the conditions are not met.";
-        return new ErrorResponse(HttpStatus.CONFLICT, REASON, message + e.getClass(), LocalDateTime.now());
+        return new ErrorResponse(HttpStatus.CONFLICT, REASON, message, LocalDateTime.now());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

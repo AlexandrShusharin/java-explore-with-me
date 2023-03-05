@@ -14,7 +14,6 @@ import ru.practicum.event.model.Event;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exceptions.InvalidParametersException;
 import ru.practicum.exceptions.ObjectNotFoundException;
-import ru.practicum.request.model.RequestStatus;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
@@ -32,7 +31,7 @@ public class CommentServiceImp implements CommentService {
     @Override
     public CommentDto addComment(long userId, long eventId, CommentAddDto commentAddDto) {
         Comment comment = CommentMapper.fromCommentAddDtoToComment(commentAddDto);
-        User user = userRepository.findById(eventId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException(
                         String.format("User with id=%d was not found", eventId)));
         comment.setAuthor(user);
@@ -42,16 +41,8 @@ public class CommentServiceImp implements CommentService {
         comment.setEvent(event);
         if (event.getInitiator().getId() == user.getId()) {
             throw new InvalidParametersException(
-                    String.format("Comment can`t be published by Event owner.", event.getId()));
-        } else if (!event.getRequests().stream()
-                .filter(o-> o.getId() == user.getId())
-                .filter(o -> o.getStatus().equals(RequestStatus.CONFIRMED))
-                .collect(Collectors.toList())
-                .isEmpty()) {
-            throw new InvalidParametersException(
-                    String.format("Comment can`t be published by not event participant ", event.getId()));
+                    String.format("Comment can`t be published by Event owner."));
         }
-
         comment.setCreated(LocalDateTime.now());
         return CommentMapper.fromCommentToCommentDto(commentRepository.save(comment));
     }

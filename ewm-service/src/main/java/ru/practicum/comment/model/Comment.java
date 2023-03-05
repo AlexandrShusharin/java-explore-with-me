@@ -27,7 +27,7 @@ public class Comment {
     private User author;
 
     @ManyToOne
-    @JoinColumn(name = "item_id")
+    @JoinColumn(name = "event_id")
     private Event event;
 
     @JoinColumn(name = "created")

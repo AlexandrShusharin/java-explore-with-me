@@ -3,11 +3,9 @@ package ru.practicum.event.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import ru.practicum.category.model.CategoryEventDto;
-import ru.practicum.comment.model.CommentDto;
 import ru.practicum.user.model.UserShortDto;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
