@@ -7,7 +7,7 @@ import ru.practicum.location.model.LocationMapper;
 import ru.practicum.request.model.RequestStatus;
 import ru.practicum.user.model.UserMapper;
 
-@NoArgsConstructor(access= AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class EventMapper {
     public static Event fromEventAddDtoToEvent(EventAddDto eventAddDto) {
         return Event.builder()

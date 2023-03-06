@@ -1,9 +1,10 @@
 package ru.practicum.location.model;
 
-public final class LocationMapper {
-    private LocationMapper() {
-    }
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class LocationMapper {
     public static LocationDto locationToLocationDto(Location location) {
         return LocationDto.builder()
                 .lat(location.getLat())

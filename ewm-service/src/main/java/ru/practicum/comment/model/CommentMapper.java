@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.user.model.UserMapper;
 
-@NoArgsConstructor(access= AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CommentMapper {
     public static CommentDto fromCommentToCommentDto(Comment comment) {
         return CommentDto.builder()
