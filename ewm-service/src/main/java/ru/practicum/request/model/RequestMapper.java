@@ -1,9 +1,10 @@
 package ru.practicum.request.model;
 
-public final class RequestMapper {
-    private RequestMapper() {
-    }
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access= AccessLevel.PRIVATE)
+public final class RequestMapper {
     public static RequestDto fromRequestToRequestDto(Request request) {
         return RequestDto.builder()
                 .id(request.getId())

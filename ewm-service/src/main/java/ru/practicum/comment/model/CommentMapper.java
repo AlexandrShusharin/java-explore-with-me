@@ -1,11 +1,11 @@
 package ru.practicum.comment.model;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import ru.practicum.user.model.UserMapper;
 
+@NoArgsConstructor(access= AccessLevel.PRIVATE)
 public final class CommentMapper {
-    private CommentMapper() {
-    }
-
     public static CommentDto fromCommentToCommentDto(Comment comment) {
         return CommentDto.builder()
                 .id(comment.getId())
