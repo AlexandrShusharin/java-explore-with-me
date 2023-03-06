@@ -2,6 +2,7 @@ package ru.practicum.event.model;
 
 import lombok.*;
 import ru.practicum.category.model.Category;
+import ru.practicum.comment.model.Comment;
 import ru.practicum.location.model.Location;
 import ru.practicum.request.model.Request;
 import ru.practicum.user.model.User;
@@ -70,4 +71,9 @@ public class Event {
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL)
     private List<Request> requests;
+
+    @OneToMany(mappedBy = "event",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
+    private List<Comment> comments;
 }

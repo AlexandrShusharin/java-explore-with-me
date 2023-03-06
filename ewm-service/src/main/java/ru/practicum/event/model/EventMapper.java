@@ -1,14 +1,14 @@
 package ru.practicum.event.model;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import ru.practicum.category.model.CategoryMapper;
 import ru.practicum.location.model.LocationMapper;
 import ru.practicum.request.model.RequestStatus;
 import ru.practicum.user.model.UserMapper;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class EventMapper {
-    private EventMapper() {
-    }
-
     public static Event fromEventAddDtoToEvent(EventAddDto eventAddDto) {
         return Event.builder()
                 .title(eventAddDto.getTitle())

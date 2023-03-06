@@ -1,3 +1,4 @@
+DELETE FROM comments;
 DELETE FROM compilations_events;
 DELETE FROM compilations;
 DELETE FROM requests;
@@ -6,6 +7,7 @@ DELETE FROM categories;
 DELETE FROM users;
 DELETE FROM locations;
 
+ALTER TABLE comments ALTER COLUMN id RESTART WITH 1;
 ALTER TABLE compilations ALTER COLUMN id RESTART WITH 1;
 ALTER TABLE requests ALTER COLUMN id RESTART WITH 1;
 ALTER TABLE events ALTER COLUMN id RESTART WITH 1;

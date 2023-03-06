@@ -1,9 +1,10 @@
 package ru.practicum.category.model;
 
-public final class CategoryMapper {
-    private CategoryMapper() {
-    }
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class CategoryMapper {
     public static CategoryDto fromCategoryToCategoryDto(Category category) {
         return CategoryDto.builder()
                 .id(category.getId())
